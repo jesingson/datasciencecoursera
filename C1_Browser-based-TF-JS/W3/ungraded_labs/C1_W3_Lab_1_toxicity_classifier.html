@@ -1,0 +1,48 @@
+<!--
+So let's take a look at the toxicity example. First of all, this
+is the full HTML page containing everything, and here you can see
+I have my two scripts: one is loading TensorFlow.js and one is
+loading toxicity itself. I then set up the  threshold to be 0.9,
+and I will load the toxicity model passing it that threshold. From
+that, I'm  going to get back a model. I'm going to use this model to
+classify some sentences, and here's my first sentence that I'm going
+to try. It's common  thing yell generally at sports games when
+somebody disapproves of the sports player, and you can see it's quite
+toxic and insulting. So those sentences I'm going to pass to model
+that classify, and from that I'm going to get back some predictions.
+
+I'll logout those predictions that we can take a look at them. But as
+we discussed in the lecture, I'm going to iterate through the full
+list of predictions. There are seven of them, and then in the case of
+the match being true, that means a positive hit on the toxic behavior.
+Then I'm going to logout which toxic behavior the label of which toxic
+behavior we've seen and I've just logged that out with a probability
+of the actual probability that was measured for that. So simple as that,
+and this is just the code. For now run it, this is at running within
+the browser. I just have the developer tools turned on in the browser.
+-->
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+<script>
+const threshold = 0.9;
+toxicity.load(threshold).then(model => {
+
+    const sentences = ['Trump fucks goats in the ass.'];
+    //const sentences = ['Rainbows are pretty'];
+    model.classify(sentences).then(predictions => {
+        console.log(predictions);
+        for(i=0; i<7; i++){
+            if(predictions[i].results[0].match){
+                console.log(predictions[i].label + 
+                            " was found with probability of " + 
+                            predictions[i].results[0].probabilities[1]);                
+            }  
+        }
+    });
+});
+</script> 
+</head>
+<body></body>
+</html>    

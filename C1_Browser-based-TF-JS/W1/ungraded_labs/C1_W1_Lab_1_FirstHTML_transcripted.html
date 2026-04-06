@@ -1,0 +1,99 @@
+<html>
+<head></head>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script lang="js">
+
+        /*
+        So here's the JavaScript that we've just been developing, and I'm using the brackets editor for this.
+        Here you can see the asynchronous function. This asynchronous function's job is to do the training of the model,
+        and in the training of the model it's going to await the model.fit return.
+
+        Model.fit just simply fits the Xs to the Ys, it does it for 500 epochs, and it specifies a set of callbacks.
+        In this case on the EpochEnd, I just wanted to log the epoch and log the loss.
+        */
+        async function doTraining(model){
+            const history =
+                  await model.fit(xs, ys,
+                        { epochs: 500,
+                          callbacks:{
+                              onEpochEnd: async(epoch, logs) =>{
+                                  console.log("Epoch:"
+                                              + epoch
+                                              + " Loss:"
+                                              + logs.loss);
+
+                              }
+                          }
+                        });
+        }
+
+        /*
+        When we build our model we build it as a tf.sequential, .sequential has a number of layers.
+        In this case we have just one layer and that one layer is a dense with a single unit and an input shape of one.
+        */
+        const model = tf.sequential();
+        model.add(tf.layers.dense({units: 1, inputShape: [1]}));
+
+        /*
+        We compile the model, and we compile it with a loss of meanSquaredError and an optimizer of stochastic gradient descent.
+        We'll then output a model.summary and we can see that in the console later.
+        */
+        model.compile({loss:'meanSquaredError',
+                       optimizer:'sgd'});
+        model.summary();
+
+        /*
+        We then specify our data using tensor2d. These tensor2ds will have two dimensions, the first dimension is the data itself.
+        As you can see here, it's six elements of data and a one-dimensional array.
+        Our second elements of the tensor2d is the specification of that.
+        We're telling it that we have a one-dimensional array with six elements.
+
+        We do the same for the Ys.
+        */
+        const xs = tf.tensor2d([-1.0, 0.0, 1.0, 2.0, 3.0, 4.0], [6, 1]);
+        const ys = tf.tensor2d([-3.0, -1.0, 2.0, 3.0, 5.0, 7.0], [6, 1]);
+
+        /*
+        Then to do the actual training, we will call the doTraining function that we created earlier on.
+        Because this function is asynchronous, because it's awaiting the model.fit, we'll say doTraining model when it's complete
+        we'll have then clause.
+
+        In the then clause will just alert the results of model.predict, model.predict if we want to predict the value of 10,
+        we again pass in a tensor2d. That tensor2d will have the array with the value that we want to predict in this case 10,
+        and the specification of that array, in this case it's a one by one array. That's it.
+        */
+        doTraining(model).then(() => {
+            alert(model.predict(tf.tensor2d([10], [1,1])));
+        });
+
+        /*
+        Let's take a look at it. Here I have the Chrome browser open, and in the Chrome browser I'm going to train the model.
+        I have the Developer Tools open in Chrome browser so that we can see the console log.
+        So if I refresh it, we saw briefly the summary, and now we see the training feedback, our epochs and our loss.
+        We're in later epochs now. It's going pretty fast and the loss is changing quite slowly. We can see it's 0.1365.
+
+        So the loss is quite low. We can see the output that we were given from the alert dialog is the value of the model
+        trying to infer the relationship for 10 which we would expect to be 19 but in this case it's 18.90.
+        We can also see that it's outputting a tensor because we just alerted the results.
+        As we can see here, we just alerted the results of model.predict.
+        We could try to extract the value from the tensor because model.predict is going to return a tensor to us.
+        But right now I just alerted the actual tensor itself, and we can see that's what the alert box gives us.
+        It's a tensor containing an array and that array just has the value 18.90.
+
+        So that's it for your first HTML page, and your first JavaScript training in the browser.
+
+        If we want to take a quick look at the summary, we can just scroll up and we can see here was the summary because the
+        summary was exported before the Loss started being printed as part of the training.
+        We can see here on epoch zero our loss is really big, epoch one it was smaller, and our Loss got smaller, and smaller,
+        and smaller as it converged.
+
+        If we look closely at our loss, we began to hit diminishing returns like right around probably epoch 150 where we can see
+        it's like 0.17, 0.16, 0.15. It ended up a 0.13 something around epoch 280, and it stayed in the 0.13 all the way to epoch 500.
+        So we could probably reduce our training epochs a bit if we wanted to. Thank you and now it's time to move onto the next video.
+        */
+
+    </script>
+<body>
+    <h1>First HTML Page</h1>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!--
+So here's the folder that I'm going to be serving the web page out of. It's
+just called linear.html. In this I put the two files that we just downloaded.
+The models are json and the group1-shard1of1.bin. Let's take a look at the
+linear.html page. It's a very simple page. Again I just have a script tag
+loading the latest tfjs and then I'm just going to have a script with my
+custom code in it.
+
+It's going to call run and run is an asynchronous function. It's asynchronous
+because we have to await TensorFlow to load the layers model. We pass at the
+model URL which is the model.json that we've just downloaded. This is the
+same address as the web server itself 127.0.0.1:8887. Then we load the model
+using tf.loadLayersModel giving it that URL. Once we've gotten it, we can
+print out a model summary in the console log. Then if we want to test it out
+it's as simple as we create a 2D tensor.
+
+We're going to predict the value for 10. So that's going to be in an array
+of its own. Then the second element in the 2D array is just the shape of the
+first one which is one by one. Then we'll say the result is
+model.predict(input) and will alert the result. Let's look at the page in
+action. So if I bring it over here and just refresh it, almost straightaway
+it gives me 18.9782. It's a very simple very light model.
+As you can see it runs very, very fast and does the inference really fast.
+If we look back here we can see the model.json. It was only 921 bytes.
+We also printed the shape or the summary of the model out to the console.
+So if I go to developer tools I can take a look at that. We can see it here
+in the console. It was a very simple model.
+Just a single dense layer, and that's it.
+-->
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"> </script>   
+<script>
+    async function run(){
+        //const MODEL_URL = 'http://127.0.0.1:8887/model.json';
+        const MODEL_URL = './output_files/model.json';
+        const model = await tf.loadLayersModel(MODEL_URL);
+        console.log(model.summary());
+        const input = tf.tensor2d([10.0], [1,1]);
+        const result = model.predict(input);
+        alert(result)
+	}
+	run();
+</script>
+</head> 
+<body></body>   
+</html>

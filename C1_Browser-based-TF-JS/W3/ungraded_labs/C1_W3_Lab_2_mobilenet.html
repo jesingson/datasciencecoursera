@@ -1,0 +1,59 @@
+<!--
+So here's the source code that we've been looking at. First of all, within the head block
+we can see the two script tags, and these are loading the latest version of TensorFlow.js,
+and in this case we're going to load the mobilenet model. Then in the body of the page,
+we're going to be specifying that we have an image, and this image is just going to be ID
+image and the sources the cat.jpg, which we can see here, and we'll have a div in that
+that we call output, and we just want to make it nice big font in there, so we're going to
+have a courier font 24 pixel. I will make the div about 300 pixels high.
+-->
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"> </script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script> 
+</head>
+<body>
+    <!-- Feel free to replace the quotes in src with these
+        "/image/coffee.jpg"
+        "/image/cat.jpg"
+        "/image/pig.jpg"
+    -->
+    <img id="img" src="./image/pig.jpg" style="height:700px"></img>
+    <div id="output" style="font-family:courier;font-size:24px;height:300px"></div>
+</body>
+<!--
+The second script block we actually put underneath the body. The reason for this is that
+we want these two to be loaded before this script actually executes. Then in this script,
+we're just going to put a handle on image to the document element called image which is
+this one, and we'll create one called outp which is pointing at this output div.
+
+Then we'll load the mobilenet. Once it's done, we'll have a model. With that model, we'll
+then classify passing it the image which is what's here, now end up passing it the cat.jpg.
+The nice thing is that all the details of turning that image into tensors to do predictions
+with is all done for us under the hood in the model. Once that's done, then we'll get some
+predictions. When we have those predictions, the first thing we'll do is console.log them.
+So we can take a look at them, but we'll also then loop through the length of the predictions,
+is usually going to be three of them.
+
+We'll loop through that and we'll just create HTML in the output which is just going to be
+a new line, the class name of the prediction, a colon and then the probability of the
+prediction. It's really as simple as that. That's one of the nice things about this model,
+is how easy it makes it. I'm not doing anything to convert the image into tensors as we
+were doing with the MNIST example last week. I'm just passing it the image and all of the
+code to handle that is available to me inside the model. So let's see what it looks like
+when it runs. So I'm using the web server for Chrome as before.
+
+-->
+<script>
+    const img = document.getElementById('img');
+    const outp = document.getElementById('output');
+    mobilenet.load().then(model => {
+        model.classify(img).then(predictions => {
+            console.log(predictions);
+            for(var i = 0; i<predictions.length; i++){
+                outp.innerHTML += "<br/>" + predictions[i].className + " : " + predictions[i].probability;
+            }
+        });
+    });
+</script>
+</html>
